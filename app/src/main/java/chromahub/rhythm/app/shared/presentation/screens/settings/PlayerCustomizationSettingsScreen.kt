@@ -178,6 +178,7 @@ fun PlayerCustomizationSettingsScreen(onBackClick: () -> Unit) {
 
     // State variables
     val playerThemeId by appSettings.playerThemeId.collectAsState()
+    val nowPlayingStyle by appSettings.nowPlayingStyle.collectAsState()
     val isExpressiveActive = playerThemeId != "MATERIAL"
     val playerShowGradientOverlay by appSettings.playerShowGradientOverlay.collectAsState()
     val playerShowSeekButtons by appSettings.playerShowSeekButtons.collectAsState()
@@ -205,6 +206,7 @@ fun PlayerCustomizationSettingsScreen(onBackClick: () -> Unit) {
     var showPlayerProgressStyleSheet by remember { mutableStateOf(false) }
     var showPlayerThumbStyleSheet by remember { mutableStateOf(false) }
     var showAmbientIntensitySheet by remember { mutableStateOf(false) }
+    var showNowPlayingStyleDialog by remember { mutableStateOf(false) }
 
     CollapsibleHeaderScreen(
         title = context.getString(R.string.settings_player),
@@ -254,6 +256,35 @@ fun PlayerCustomizationSettingsScreen(onBackClick: () -> Unit) {
                                     )
                                 }
                             }
+                        )
+                    ),
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                )
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(24.dp))
+                Text(
+                    text = "Now Playing Appearance",
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(start = 16.dp, bottom = 8.dp)
+                )
+                Material3SettingsGroup(
+                    items = listOf(
+                        toMaterial3SettingsItem(
+                            context = context,
+                            hapticFeedback = haptics,
+                            item = SettingItem(
+                                icon = MaterialSymbolIcon("dashboard_customize"),
+                                title = "Now Playing layout",
+                                description = when (nowPlayingStyle) {
+                                    "RHYTHM" -> "Rhythm default"
+                                    "NORMAL" -> "Metro Normal"
+                                    else -> "Metro ${nowPlayingStyle.lowercase().replaceFirstChar { it.uppercase() }}"
+                                },
+                                onClick = { showNowPlayingStyleDialog = true }
+                            )
                         )
                     ),
                     containerColor = MaterialTheme.colorScheme.surfaceContainer
@@ -620,6 +651,54 @@ fun PlayerCustomizationSettingsScreen(onBackClick: () -> Unit) {
 
             item { Spacer(modifier = Modifier.height(24.dp)) }
         }
+    }
+
+    if (showNowPlayingStyleDialog) {
+        val styles = listOf(
+            "RHYTHM" to "Rhythm default",
+            "NORMAL" to "Metro Normal",
+            "FIT" to "Metro Fit",
+            "FLAT" to "Metro Flat",
+            "COLOR" to "Metro Color",
+            "MATERIAL" to "Metro Material",
+            "CLASSIC" to "Metro Classic",
+            "ADAPTIVE" to "Metro Adaptive",
+            "BLUR" to "Metro Blur",
+            "TINY" to "Metro Tiny",
+            "PEEK" to "Metro Peek"
+        )
+        AlertDialog(
+            onDismissRequest = { showNowPlayingStyleDialog = false },
+            title = { Text("Now Playing layout") },
+            text = {
+                Column(Modifier.verticalScroll(rememberScrollState())) {
+                    styles.forEach { (id, label) ->
+                        val selected = nowPlayingStyle == id
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(16.dp))
+                                .clickable {
+                                    HapticUtils.performHapticFeedback(context, haptics, HapticType.HEAVY)
+                                    appSettings.setNowPlayingStyle(id)
+                                    showNowPlayingStyleDialog = false
+                                }
+                                .padding(horizontal = 8.dp, vertical = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            RadioButton(selected = selected, onClick = null)
+                            Spacer(Modifier.width(8.dp))
+                            Text(label, style = MaterialTheme.typography.bodyLarge)
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showNowPlayingStyleDialog = false }) {
+                    Text("Close")
+                }
+            }
+        )
     }
 
     if (showChipOrderBottomSheet) {
