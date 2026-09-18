@@ -184,6 +184,7 @@ class AppSettings private constructor(context: Context) {
         
         // Player Theme Settings
         private const val KEY_PLAYER_THEME_ID = "player_theme_id" // ID of the selected player theme (default, compact, large, minimal)
+        private const val KEY_NOW_PLAYING_STYLE = "now_playing_style"
         private const val KEY_MINI_PLAYER_THEME_ID = "miniplayer_theme_id"
         private const val KEY_USE_EXPERIMENTAL_PLAYER_UI = "use_experimental_player_ui"
         private const val KEY_ENABLE_ALBUM_EDITING = "enable_album_editing"
@@ -843,6 +844,9 @@ class AppSettings private constructor(context: Context) {
     // Player Theme Settings
     private val _playerThemeId = MutableStateFlow(prefs.getString(KEY_PLAYER_THEME_ID, "EXPRESSIVE") ?: "EXPRESSIVE")
     val playerThemeId: StateFlow<String> = _playerThemeId.asStateFlow()
+
+    private val _nowPlayingStyle = MutableStateFlow(prefs.getString(KEY_NOW_PLAYING_STYLE, "RHYTHM") ?: "RHYTHM")
+    val nowPlayingStyle: StateFlow<String> = _nowPlayingStyle.asStateFlow()
     
     private val _miniPlayerThemeId = MutableStateFlow(prefs.getString(KEY_MINI_PLAYER_THEME_ID, "EXPRESSIVE") ?: "EXPRESSIVE")
     val miniPlayerThemeId: StateFlow<String> = _miniPlayerThemeId.asStateFlow()
@@ -2522,6 +2526,11 @@ private val _autoCheckForUpdates = MutableStateFlow(prefs.getBoolean(KEY_AUTO_CH
     fun setPlayerThemeId(themeId: String) {
         prefs.edit { putString(KEY_PLAYER_THEME_ID, themeId) }
         _playerThemeId.value = themeId
+    }
+
+    fun setNowPlayingStyle(style: String) {
+        prefs.edit { putString(KEY_NOW_PLAYING_STYLE, style) }
+        _nowPlayingStyle.value = style
     }
     
     fun setMiniPlayerThemeId(themeId: String) {
