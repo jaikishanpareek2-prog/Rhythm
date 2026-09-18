@@ -64,17 +64,17 @@ jobs:
       run: ./gradlew assembleGithubRelease assembleGithubDebug
 
     - name: Generate build info
-      if: github.event_name == 'pull_request'
+      if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
       run: |
         echo "Build completed at: $(date)" > build_info.txt
         echo "Commit: ${{ github.sha }}" >> build_info.txt
-        echo "Branch: ${{ github.head_ref }}" >> build_info.txt
+        echo "Branch: ${{ github.head_ref || github.ref_name }}" >> build_info.txt
 
-    - name: Upload PR artifacts
-      if: github.event_name == 'pull_request'
+    - name: Upload APK artifacts
+      if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
       uses: actions/upload-artifact@v7
       with:
-        name: rhythm-pr-${{ github.event.pull_request.number }}
+        name: rhythm-${{ github.run_number }}
         path: |
           app/build/outputs/apk/github/release/*.apk
           app/build/outputs/apk/github/debug/*.apk
