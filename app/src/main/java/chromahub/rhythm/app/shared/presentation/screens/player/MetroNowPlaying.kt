@@ -22,19 +22,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.MoreHoriz
-import androidx.compose.material.icons.filled.Pause
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.QueueMusic
-import androidx.compose.material.icons.filled.Repeat
-import androidx.compose.material.icons.filled.Shuffle
-import androidx.compose.material.icons.filled.SkipNext
-import androidx.compose.material.icons.filled.SkipPrevious
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -51,6 +38,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import chromahub.rhythm.app.shared.presentation.components.icons.Icon
+import chromahub.rhythm.app.shared.presentation.components.icons.RhythmIcons
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import chromahub.rhythm.app.shared.data.model.Song
@@ -109,13 +98,13 @@ fun MetroNowPlayingScreen(
             horizontalArrangement = Arrangement.End
         ) {
             IconButton(onClick = onToggleShuffle) {
-                Icon(Icons.Default.Shuffle, contentDescription = "Shuffle", tint = if (isShuffleEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface)
+                Icon(RhythmIcons.Player.Shuffle, contentDescription = "Shuffle", tint = if (isShuffleEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface)
             }
             IconButton(onClick = onToggleRepeat) {
-                Icon(Icons.Default.Repeat, contentDescription = "Repeat")
+                Icon(RhythmIcons.Player.Repeat, contentDescription = "Repeat")
             }
             IconButton(onClick = onLocationClick) {
-                Icon(Icons.Default.MoreHoriz, contentDescription = "More")
+                Icon(RhythmIcons.Actions.More, contentDescription = "More")
             }
         }
     }
@@ -334,9 +323,9 @@ private fun PlayerColumn(
 @Composable
 private fun Header(back: () -> Unit, queue: () -> Unit) {
     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        IconButton(onClick = back) { Icon(Icons.Default.ArrowBack, "Back") }
+        IconButton(onClick = back) { Icon(RhythmIcons.Navigation.Back, "Back") }
         Spacer(Modifier.weight(1f))
-        IconButton(onClick = queue) { Icon(Icons.Default.QueueMusic, "Queue") }
+        IconButton(onClick = queue) { Icon(RhythmIcons.Player.Queue, "Queue") }
     }
 }
 
@@ -368,7 +357,7 @@ private fun SongInfo(song: Song?, favorite: Boolean, favoriteClick: () -> Unit, 
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
             Text(song?.title ?: "Nothing playing", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, maxLines = 2)
             IconButton(onClick = favoriteClick) {
-                Icon(if (favorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder, "Favorite")
+                Icon(if (favorite) RhythmIcons.Actions.Favorite else RhythmIcons.Actions.FavoriteOutlined, "Favorite")
             }
         }
         Text(song?.artist ?: "Unknown artist", style = MaterialTheme.typography.bodyMedium, maxLines = 1)
@@ -394,19 +383,19 @@ private fun Controls(playing: Boolean, playPause: () -> Unit, previous: () -> Un
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButton(onClick = previous) { Icon(Icons.Default.SkipPrevious, "Previous") }
+        IconButton(onClick = previous) { Icon(RhythmIcons.Player.SkipPrevious, "Previous") }
         Surface(
             shape = if (classic) CircleShape else RoundedCornerShape(22.dp),
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(if (classic) 64.dp else 58.dp).clickable(onClick = playPause)
         ) {
             Icon(
-                if (playing) Icons.Default.Pause else Icons.Default.PlayArrow,
+                if (playing) RhythmIcons.Player.Pause else RhythmIcons.Player.Play,
                 contentDescription = if (playing) "Pause" else "Play",
                 tint = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.padding(17.dp)
             )
         }
-        IconButton(onClick = next) { Icon(Icons.Default.SkipNext, "Next") }
+        IconButton(onClick = next) { Icon(RhythmIcons.Player.SkipNext, "Next") }
     }
 }
