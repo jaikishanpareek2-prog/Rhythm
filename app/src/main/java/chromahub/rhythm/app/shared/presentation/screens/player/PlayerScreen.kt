@@ -173,7 +173,42 @@ fun PlayerScreen(
     expansionFraction: Float = 1f
 ) {
     val playerThemeId by appSettings.playerThemeId.collectAsState()
+    val nowPlayingStyle by appSettings.nowPlayingStyle.collectAsState()
     var showFullScreenLyrics by remember { mutableStateOf(false) }
+
+    if (nowPlayingStyle != "RHYTHM") {
+        MetroNowPlayingScreen(
+            style = nowPlayingStyle,
+            song = song,
+            isPlaying = isPlaying,
+            progress = progress,
+            currentTimeStr = formatDuration(
+                (progress().coerceIn(0f, 1f) * (song?.duration?.takeIf { it > 0 } ?: musicViewModel.duration.value.coerceAtLeast(0L))).toLong(),
+                appSettings.useHoursInTimeFormat.value
+            ),
+            totalTimeStr = formatDuration(
+                song?.duration?.takeIf { it > 0 } ?: musicViewModel.duration.value.coerceAtLeast(0L),
+                appSettings.useHoursInTimeFormat.value
+            ),
+            queuePosition = queuePosition,
+            queueTotal = queueTotal,
+            isShuffleEnabled = isShuffleEnabled,
+            repeatMode = repeatMode,
+            isFavorite = isFavorite,
+            onPlayPause = onPlayPause,
+            onSeek = onSeek,
+            onSkipPrevious = onSkipPrevious,
+            onSkipNext = onSkipNext,
+            onToggleFavorite = onToggleFavorite,
+            onToggleShuffle = onToggleShuffle,
+            onToggleRepeat = onToggleRepeat,
+            onQueueClick = onQueueClick,
+            onLocationClick = onLocationClick,
+            onBack = onBack,
+            modifier = modifier
+        )
+        return
+    }
 
     BackHandler(enabled = showFullScreenLyrics || expansionFraction > 0.5f) {
         if (showFullScreenLyrics) {
